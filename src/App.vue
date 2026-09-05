@@ -1,5 +1,6 @@
 <script setup>
 import { computed, defineAsyncComponent, ref } from 'vue'
+import CollaborationPanel from './components/CollaborationPanel.vue'
 import MemberDetail from './components/MemberDetail.vue'
 import MemberFilters from './components/MemberFilters.vue'
 import MemberGrid from './components/MemberGrid.vue'
@@ -27,7 +28,7 @@ function resetFilters() {
       <span class="brand-mark" aria-hidden="true">群</span>
       <span>群像云图</span>
     </a>
-    <p>P3 · v1.1 搜索与图谱</p>
+    <p>P3 · v2.0 协同管理</p>
   </header>
 
   <main id="top">
@@ -65,6 +66,8 @@ function resetFilters() {
       <SkillChart :members="visibleMembers" />
     </section>
 
+    <CollaborationPanel />
+
     <section class="privacy-strip" aria-labelledby="privacy-title">
       <p class="eyebrow">DATA PROMISE</p>
       <h2 id="privacy-title">字段有目的，公开有边界。</h2>
@@ -76,7 +79,7 @@ function resetFilters() {
     </section>
   </main>
 
-  <footer><span>群像云图 P3 v1.1</span><span>为协作而认识，不为收集而收集。</span></footer>
+  <footer><span>群像云图 P3 v2.0</span><span>为协作而认识，不为收集而收集。</span></footer>
 
   <div v-if="selected" class="detail-backdrop" @click.self="selected = null">
     <MemberDetail :member="selected" @close="selected = null" />

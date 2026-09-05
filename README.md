@@ -1,6 +1,6 @@
 # 群像云图｜P3 成员数字画像与协同管理平台
 
-当前版本：`p3-v1.1` 搜索、技能筛选与群体图谱。
+当前版本：`p3-v2.0` 提交审核、权限、CSV 与 MySQL。
 
 ## 教师从这里开始
 
@@ -12,7 +12,7 @@ npm run build
 npm run dev
 ```
 
-先阅读 `docs/lesson-12-teacher-guide.md` 完成 v1.0，再阅读 `docs/lesson-12-v1.1-teacher-guide.md` 增加筛选和图谱。
+第 12 次课使用两份 v1.x 指南；第 13 次课从 `docs/lesson-13-teacher-guide.md` 开始。
 
 ## 已实现
 
@@ -25,6 +25,9 @@ npm run dev
 - CI 通过后触发的 Netlify 自动生产部署。
 - 关键字与技能组合筛选、零结果和清除条件。
 - 从当前筛选结果实时聚合的 ECharts 技能柱状图与文本摘要。
+- HMAC 签名会话、成员/审核员 RBAC 与服务器端状态机。
+- CSV 预览、全批事务导入、重复邮箱回滚、公式注入防护和脱敏导出。
+- SQLite 本地数据层与 MySQL 生产数据层，共用同一 API 契约。
 
 ## 固定入口
 

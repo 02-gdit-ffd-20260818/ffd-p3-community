@@ -1,6 +1,7 @@
 import { createSSRApp, h } from 'vue'
 import { renderToString } from '@vue/server-renderer'
 import { describe, expect, it } from 'vitest'
+import CollaborationPanel from './CollaborationPanel.vue'
 import MemberCard from './MemberCard.vue'
 import MemberDetail from './MemberDetail.vue'
 import MemberFilters from './MemberFilters.vue'
@@ -44,5 +45,12 @@ describe('成员画像组件', () => {
     const html = await render(SkillChart, { members: [member] })
     expect(html).toContain('当前结果的技能分布')
     expect(html).toContain('Vue 1 人')
+  })
+
+  it('协同工作台默认只展示安全登录入口', async () => {
+    const html = await render(CollaborationPanel)
+    expect(html).toContain('提交、审核，再公开')
+    expect(html).toContain('登录协同工作台')
+    expect(html).not.toContain('下载脱敏 CSV')
   })
 })
