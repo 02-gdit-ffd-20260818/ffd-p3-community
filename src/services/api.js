@@ -16,6 +16,7 @@ async function request(path, { token, ...options } = {}) {
 }
 
 export async function login(credentials) { return (await (await request('/api/auth/login', { method: 'POST', body: JSON.stringify(credentials) })).json()).data }
+export async function listPublicMembers() { return (await (await request('/api/members')).json()).data }
 export async function submitMember(data, token) { return (await (await request('/api/members', { method: 'POST', body: JSON.stringify(data), token })).json()).data }
 export async function listReviewMembers(token) { return (await (await request('/api/review/members', { token })).json()).data }
 export async function reviewMember(id, status, note, token) { return (await (await request(`/api/review/members/${id}/status`, { method: 'PATCH', body: JSON.stringify({ status, note }), token })).json()).data }

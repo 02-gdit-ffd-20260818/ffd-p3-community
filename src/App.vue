@@ -1,25 +1,36 @@
 <script setup>
-import { computed, defineAsyncComponent, ref } from 'vue'
+import { computed, defineAsyncComponent, onMounted, ref } from 'vue'
 import CollaborationPanel from './components/CollaborationPanel.vue'
 import MemberDetail from './components/MemberDetail.vue'
 import MemberFilters from './components/MemberFilters.vue'
 import MemberGrid from './components/MemberGrid.vue'
 import { members } from './data/members.js'
 import { filterMembers, publicMembers, skillOptions } from './domain/member.js'
+import { listPublicMembers } from './services/api.js'
 
 const SkillChart = defineAsyncComponent(() => import('./components/SkillChart.vue'))
 
-const authorizedMembers = publicMembers(members)
+const authorizedMembers = ref(publicMembers(members))
+const dataSource = ref('教学数据')
 const query = ref('')
 const skill = ref('')
-const visibleMembers = computed(() => filterMembers(authorizedMembers, { query: query.value, skill: skill.value }))
-const skills = skillOptions(authorizedMembers)
+const visibleMembers = computed(() => filterMembers(authorizedMembers.value, { query: query.value, skill: skill.value }))
+const skills = computed(() => skillOptions(authorizedMembers.value))
 const selected = ref(null)
 
 function resetFilters() {
   query.value = ''
   skill.value = ''
 }
+
+onMounted(async () => {
+  try {
+    authorizedMembers.value = await listPublicMembers()
+    dataSource.value = '生产 API 实时数据'
+  } catch {
+    dataSource.value = 'API 暂不可用，显示教学数据'
+  }
+})
 </script>
 
 <template>
@@ -53,7 +64,7 @@ function resetFilters() {
           <p class="eyebrow">MEMBER DIRECTORY</p>
           <h2 id="members-title">成员画像</h2>
         </div>
-        <p>虚构教学数据 · 公开字段经过授权标记 · 保留至 2027-07-31</p>
+        <p>{{ dataSource }} · 公开字段经过授权标记 · 保留至 2027-07-31</p>
       </div>
       <MemberFilters
         v-model:query="query"

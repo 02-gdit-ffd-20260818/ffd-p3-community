@@ -4,6 +4,7 @@ import { DatabaseSync } from 'node:sqlite'
 import { fileURLToPath } from 'node:url'
 import { createSqliteUserRepository } from './userRepository.js'
 import { hashPassword } from './auth.js'
+import { seedMemberRecords } from './seedMembers.js'
 
 const migrationsDirectory = fileURLToPath(new URL('../database/migrations', import.meta.url))
 const map = (row) => row && ({ id: row.id, name: row.name, role: row.role_title, cohort: row.cohort, location: row.location, bio: row.bio, skills: JSON.parse(row.skills_json), interests: JSON.parse(row.interests_json), avatar: row.avatar, email: row.email, status: row.status, ownerId: row.owner_id, reviewedBy: row.reviewed_by, reviewNote: row.review_note, version: row.version })
@@ -37,4 +38,10 @@ export function seedSqliteUsers(db, env = process.env) {
   const seeds = [{ username: env.MEMBER_USERNAME, password: env.MEMBER_PASSWORD, displayName: '学生成员', role: 'member' }, { username: env.REVIEWER_USERNAME, password: env.REVIEWER_PASSWORD, displayName: '课程审核员', role: 'reviewer' }]
   for (const item of seeds) if (item.username && item.password) { const { salt, hash } = hashPassword(item.password); repo.upsert({ ...item, passwordSalt: salt, passwordHash: hash }) }
   return repo
+}
+export function seedSqliteMembers(db) {
+  const repository = createSqliteMemberRepository(db)
+  const existing = new Set(repository.listAll().map((item) => item.email))
+  for (const item of seedMemberRecords) if (!existing.has(item.email)) repository.create(item)
+  return repository.listAll().length
 }

@@ -3,6 +3,7 @@ import { fileURLToPath } from 'node:url'
 import mysql from 'mysql2/promise'
 import { hashPassword } from './auth.js'
 import { createMysqlUserRepository } from './userRepository.js'
+import { seedMemberRecords } from './seedMembers.js'
 
 const migrationsDirectory = fileURLToPath(new URL('../database/mysql/migrations', import.meta.url))
 const map = (row) => row && ({ id: Number(row.id), name: row.name, role: row.role_title, cohort: row.cohort, location: row.location, bio: row.bio, skills: typeof row.skills_json === 'string' ? JSON.parse(row.skills_json) : row.skills_json, interests: typeof row.interests_json === 'string' ? JSON.parse(row.interests_json) : row.interests_json, avatar: row.avatar, email: row.email, status: row.status, ownerId: row.owner_id && Number(row.owner_id), reviewedBy: row.reviewed_by && Number(row.reviewed_by), reviewNote: row.review_note, version: row.version })
@@ -30,3 +31,8 @@ export function createMysqlMemberRepository(pool) {
   }
 }
 export async function seedMysqlUsers(pool, env=process.env){const repo=createMysqlUserRepository(pool);for(const item of [{username:env.MEMBER_USERNAME,password:env.MEMBER_PASSWORD,displayName:'学生成员',role:'member'},{username:env.REVIEWER_USERNAME,password:env.REVIEWER_PASSWORD,displayName:'课程审核员',role:'reviewer'}])if(item.username&&item.password){const{salt,hash}=hashPassword(item.password);await repo.upsert({...item,passwordSalt:salt,passwordHash:hash})}return repo}
+export async function seedMysqlMembers(pool) {
+  for (const item of seedMemberRecords) await pool.execute(`INSERT IGNORE INTO members(name,role_title,cohort,location,bio,skills_json,interests_json,avatar,email,status,owner_id) VALUES (?,?,?,?,?,?,?,?,?,?,?)`, [item.name,item.role,item.cohort,item.location,item.bio,JSON.stringify(item.skills),JSON.stringify(item.interests),item.avatar,item.email,item.status,item.ownerId])
+  const [[row]] = await pool.query('SELECT COUNT(*) count FROM members')
+  return Number(row.count)
+}
