@@ -1,6 +1,6 @@
 # 群像云图｜P3 成员数字画像与协同管理平台
 
-当前版本：`p3-v1.0` 成员画像。
+当前版本：`p3-v1.1` 搜索、技能筛选与群体图谱。
 
 ## 教师从这里开始
 
@@ -12,7 +12,7 @@ npm run build
 npm run dev
 ```
 
-然后阅读 `docs/lesson-12-teacher-guide.md`。本版刻意只实现第 12 次课的第一个垂直切片：授权字段 → 公开白名单 → 画像卡片 → 详情 → 边界测试 → 发布。
+先阅读 `docs/lesson-12-teacher-guide.md` 完成 v1.0，再阅读 `docs/lesson-12-v1.1-teacher-guide.md` 增加筛选和图谱。
 
 ## 已实现
 
@@ -23,6 +23,8 @@ npm run dev
 - 正常、边界、失败/隐私自动测试。
 - GitHub Actions、Netlify 配置与 SPA fallback。
 - CI 通过后触发的 Netlify 自动生产部署。
+- 关键字与技能组合筛选、零结果和清除条件。
+- 从当前筛选结果实时聚合的 ECharts 技能柱状图与文本摘要。
 
 ## 固定入口
 

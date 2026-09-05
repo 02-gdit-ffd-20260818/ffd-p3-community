@@ -28,3 +28,33 @@ export function toPublicMember(member) {
 export function publicMembers(records = []) {
   return records.map(toPublicMember).filter(Boolean)
 }
+
+export function filterMembers(records = [], { query = '', skill = '' } = {}) {
+  const keyword = String(query).trim().toLocaleLowerCase('zh-CN')
+  return records.filter((member) => {
+    const item = normalizeMember(member)
+    const searchable = [item.name, item.role, item.location, item.bio, ...item.skills, ...item.interests]
+      .join(' ')
+      .toLocaleLowerCase('zh-CN')
+    const matchesKeyword = !keyword || searchable.includes(keyword)
+    const matchesSkill = !skill || item.skills.includes(skill)
+    return matchesKeyword && matchesSkill
+  })
+}
+
+export function skillOptions(records = []) {
+  return [...new Set(records.flatMap((member) => normalizeMember(member).skills))]
+    .sort((left, right) => left.localeCompare(right, 'zh-CN'))
+}
+
+export function aggregateSkills(records = []) {
+  const counts = new Map()
+  for (const member of records) {
+    for (const skill of normalizeMember(member).skills) {
+      counts.set(skill, (counts.get(skill) ?? 0) + 1)
+    }
+  }
+  return [...counts.entries()]
+    .map(([name, count]) => ({ name, count }))
+    .sort((left, right) => right.count - left.count || left.name.localeCompare(right.name, 'zh-CN'))
+}

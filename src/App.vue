@@ -1,12 +1,24 @@
 <script setup>
-import { ref } from 'vue'
+import { computed, defineAsyncComponent, ref } from 'vue'
 import MemberDetail from './components/MemberDetail.vue'
+import MemberFilters from './components/MemberFilters.vue'
 import MemberGrid from './components/MemberGrid.vue'
 import { members } from './data/members.js'
-import { publicMembers } from './domain/member.js'
+import { filterMembers, publicMembers, skillOptions } from './domain/member.js'
 
-const visibleMembers = publicMembers(members)
+const SkillChart = defineAsyncComponent(() => import('./components/SkillChart.vue'))
+
+const authorizedMembers = publicMembers(members)
+const query = ref('')
+const skill = ref('')
+const visibleMembers = computed(() => filterMembers(authorizedMembers, { query: query.value, skill: skill.value }))
+const skills = skillOptions(authorizedMembers)
 const selected = ref(null)
+
+function resetFilters() {
+  query.value = ''
+  skill.value = ''
+}
 </script>
 
 <template>
@@ -15,7 +27,7 @@ const selected = ref(null)
       <span class="brand-mark" aria-hidden="true">群</span>
       <span>群像云图</span>
     </a>
-    <p>P3 · v1.0 成员画像</p>
+    <p>P3 · v1.1 搜索与图谱</p>
   </header>
 
   <main id="top">
@@ -24,12 +36,12 @@ const selected = ref(null)
         <p class="eyebrow">COMMUNITY PORTRAITS · 2026</p>
         <h1 id="hero-title">看见每个人，<br /><em>找到协作的可能。</em></h1>
         <p class="hero-copy">一份以最少采集为边界的成员公开目录。这里没有真实联系方式，也不展示未经授权的照片和介绍。</p>
-        <a class="primary-button" href="#members">认识 {{ visibleMembers.length }} 位成员</a>
+        <a class="primary-button" href="#members">认识 {{ authorizedMembers.length }} 位成员</a>
       </div>
       <div class="hero-orbit" aria-hidden="true">
         <span class="orbit orbit-one"></span>
         <span class="orbit orbit-two"></span>
-        <strong>{{ visibleMembers.length }}</strong>
+        <strong>{{ authorizedMembers.length }}</strong>
         <small>AUTHORIZED<br />PROFILES</small>
       </div>
     </section>
@@ -42,7 +54,15 @@ const selected = ref(null)
         </div>
         <p>虚构教学数据 · 公开字段经过授权标记 · 保留至 2027-07-31</p>
       </div>
+      <MemberFilters
+        v-model:query="query"
+        v-model:skill="skill"
+        :skills="skills"
+        :result-count="visibleMembers.length"
+        @reset="resetFilters"
+      />
       <MemberGrid :members="visibleMembers" @select="selected = $event" />
+      <SkillChart :members="visibleMembers" />
     </section>
 
     <section class="privacy-strip" aria-labelledby="privacy-title">
@@ -56,7 +76,7 @@ const selected = ref(null)
     </section>
   </main>
 
-  <footer><span>群像云图 P3 v1.0</span><span>为协作而认识，不为收集而收集。</span></footer>
+  <footer><span>群像云图 P3 v1.1</span><span>为协作而认识，不为收集而收集。</span></footer>
 
   <div v-if="selected" class="detail-backdrop" @click.self="selected = null">
     <MemberDetail :member="selected" @close="selected = null" />

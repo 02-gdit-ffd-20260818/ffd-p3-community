@@ -4,6 +4,8 @@ const read = (path) => readFileSync(new URL(`../${path}`, import.meta.url), 'utf
 const files = {
   app: read('src/App.vue'),
   card: read('src/components/MemberCard.vue'),
+  filters: read('src/components/MemberFilters.vue'),
+  chart: read('src/components/SkillChart.vue'),
   domain: read('src/domain/member.js'),
   data: read('src/data/members.js'),
   css: read('src/styles.css'),
@@ -14,7 +16,7 @@ const files = {
 }
 
 const checks = [
-  ['版本入口标记为 P3 v1.0', /P3 · v1\.0/.test(files.app)],
+  ['版本入口标记为 P3 v1.1', /P3 · v1\.1/.test(files.app)],
   ['至少 8 条成员教学数据', (files.data.match(/id: 'm\d+'/g) ?? []).length >= 8],
   ['资料公开前检查授权', /profileConsent/.test(files.domain)],
   ['公开对象使用字段白名单', /publicKeys/.test(files.domain)],
@@ -27,6 +29,12 @@ const checks = [
   ['授权说明包含撤回和删除', /撤回/.test(files.privacy) && /删除/.test(files.privacy)],
   ['CI 执行检查、测试与构建', /npm run check/.test(files.ci) && /npm test/.test(files.ci) && /npm run build/.test(files.ci)],
   ['Netlify 配置生产构建与 SPA fallback', /publish = "dist"/.test(files.netlify) && /to = "\/index\.html"/.test(files.netlify)],
+  ['搜索同时覆盖多个公开字段', /searchable/.test(files.domain) && /includes\(keyword\)/.test(files.domain)],
+  ['技能筛选与选项去重已实现', /matchesSkill/.test(files.domain) && /skillOptions/.test(files.domain)],
+  ['图表数据由成员技能聚合', /aggregateSkills/.test(files.domain) && /aggregateSkills\(props\.members\)/.test(files.chart)],
+  ['ECharts 正确初始化、响应尺寸和销毁', /echarts\.init/.test(files.chart) && /chart\?\.resize/.test(files.chart) && /chart\?\.dispose/.test(files.chart)],
+  ['图表具有单位、tooltip 和文本摘要', /人数/.test(files.chart) && /tooltip/.test(files.chart) && /文本摘要/.test(files.chart)],
+  ['筛选结果用 aria-live 播报', /aria-live="polite"/.test(files.filters)],
 ]
 
 const failed = checks.filter(([, passed]) => !passed)
@@ -35,4 +43,4 @@ if (failed.length) {
   process.exit(1)
 }
 
-console.log(`P3 v1.0 结构检查通过：${checks.length} 项规则全部满足。`)
+console.log(`P3 v1.1 结构检查通过：${checks.length} 项规则全部满足。`)

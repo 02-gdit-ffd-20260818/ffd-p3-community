@@ -1,6 +1,6 @@
 {
   "name": "ffd-p3-community",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "private": true,
   "type": "module",
   "engines": {
@@ -15,6 +15,7 @@
     "build": "vite build"
   },
   "dependencies": {
+    "echarts": "^6.1.0",
     "vue": "^3.5.0"
   },
   "devDependencies": {
