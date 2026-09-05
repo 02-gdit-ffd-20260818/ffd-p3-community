@@ -23,3 +23,7 @@
 - 5 项领域单元测试与 3 项组件测试。
 - 生产构建成功、GitHub Actions 绿色、`p3-v1.0` Release。
 - Netlify 固定 URL 可匿名访问，首页与静态资源返回 HTTP 200。
+
+## 自动部署
+
+仓库 Actions Secrets 配置 `NETLIFY_AUTH_TOKEN` 与 `NETLIFY_SITE_ID`。`verify-p3` 成功后，`deploy-netlify` 才会发布相同的生产地址；Secret 值不得进入课堂投影、截图或仓库。

@@ -22,6 +22,12 @@ npm run dev
 - 空地点、空介绍、空兴趣与空技能处理。
 - 正常、边界、失败/隐私自动测试。
 - GitHub Actions、Netlify 配置与 SPA fallback。
+- CI 通过后触发的 Netlify 自动生产部署。
+
+## 固定入口
+
+- 仓库：<https://github.com/02-gdit-ffd-20260818/ffd-p3-community>
+- 生产站点：<https://ffd-p3-community.netlify.app/>
 
 ## 版本路线
 
